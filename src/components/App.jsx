@@ -17,7 +17,9 @@ export class App extends Component {
 formSubmitHandler = data => {
   const contact = { id: shortid.generate(), ...data };
 
-  this.setState(({ contacts }) => ({
+  this.state.contacts.find(contacts => contacts.name.toLowerCase() === this.contacts.name.toLowerCase())
+  ? alert(`${this.contacts.name} вже в контактах`)
+  : this.setState(({ contacts }) => ({
     contacts: [contact, ...contacts],
   }));
   // if (contact) return alert(contact.name + ' is already in contacts.');
