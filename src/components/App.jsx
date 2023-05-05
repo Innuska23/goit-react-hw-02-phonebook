@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import shortid from 'shortid';
 import ContactForm from "./ContactForm/ContactForm";
 import Filter from "./Filter/Filter";
-import ContactList from "./ContactList/ContactList";
+import ContactList from './ContactList/ContactList';
 export class App extends Component {
   state = {
     contacts: [
@@ -13,47 +13,42 @@ export class App extends Component {
     ],
     filter: '',
   };
-  // handleForm = row => {
-  //   if (this.state.contacts.find(({ name }) => name === row.name)) {
-  //     this.existRow(row.name);
-  //   }
-  // handleNameChange = event => {
-  //   // console.log(event.currentTarget.value);
-  //   this.setState({ name: event.currentTarget.value })
-  // }
-  // handleTagChange = event => {
-  //   // console.log(event.currentTarget.value);
-  //   this.setState({ tag: event.currentTarget.value })
-  // }
-// formSumbitHandler = data => {
-//   setTimeout(() => {
-//     console.log(data);
-//   }, 1000);
-// }
+
 formSubmitHandler = data => {
   const contact = { id: shortid.generate(), ...data };
 
   this.setState(({ contacts }) => ({
     contacts: [contact, ...contacts],
   }));
+  // if (contact) return alert(contact.name + ' is already in contacts.');
+
+  //   data.id = shortid();
+  //   this.setState(prev => ({ contacts: [data, ...prev.contacts] }));
+  // };
 };
 
 handlerChangeFilter = e => this.setState({ filter: e.target.value });
 
-// handleRemoveContact = contactId => {
-//   this.setState(state => ({
-//     ...state,
-//     contacts: state.contacts.filter(contact => contact.id !== contactId),
-//   }));
-// };
-// getFilteredContacts = () => {
-//   if (!this.state.filter) return this.state.contacts;
+handleRemoveContact = contactId => {
+  this.setState(state => ({
+    ...state,
+    contacts: state.contacts.filter(contact => contact.id !== contactId),
+  }));
+};
 
-//   return this.state.contacts.filter(contact =>
-//     contact.name.includes(this.state.filter)
-//   );
-// };
+getFilteredContacts = () => {
+  if (!this.state.filter) return this.state.contacts;
 
+  return this.state.contacts.filter(contact =>
+    contact.name.includes(this.state.filter)
+  );
+};
+
+deleteContact = contactId => {
+  this.setState(({ contacts }) => ({
+    contacts: contacts.filter(({ id }) => id !== contactId),
+  }));
+};
 
   render() {
     const { filter} = this.state;
@@ -73,8 +68,8 @@ handlerChangeFilter = e => this.setState({ filter: e.target.value });
       <h2>Contacts</h2>
       <Filter value={filter} handlerChangeFilter={this.handlerChangeFilter}/>
       {/* <ContactList/> */}
-      {/* <ContactList  contacts={this.getFilteredContacts()}
-          onRemoveContact={this.handleRemoveContact}/> */}
+      <ContactList  contacts={this.getFilteredContacts()}
+          onDelete={this.handleRemoveContact}/>
       </div>
     );
   }
