@@ -3,6 +3,7 @@ import shortid from 'shortid';
 import ContactForm from "./ContactForm/ContactForm";
 import Filter from "./Filter/Filter";
 import ContactList from './ContactList/ContactList';
+import { Container } from "./App.styled";
 export class App extends Component {
   state = {
     contacts: [
@@ -15,18 +16,22 @@ export class App extends Component {
   };
 
 formSubmitHandler = data => {
+  const { name } = data;
+  const { contacts } = this.state;
+  if (
+    contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    )
+  ) {
+    alert(`${name} is already in contacts`);
+    return;
+  }
+
   const contact = { id: shortid.generate(), ...data };
 
-  this.state.contacts.find(contacts => contacts.name.toLowerCase() === this.contacts.name.toLowerCase())
-  ? alert(`${this.contacts.name} вже в контактах`)
-  : this.setState(({ contacts }) => ({
-    contacts: [contact, ...contacts],
+  this.setState(({ contacts }) => ({
+    contacts: [...contacts, contact],
   }));
-  // if (contact) return alert(contact.name + ' is already in contacts.');
-
-  //   data.id = shortid();
-  //   this.setState(prev => ({ contacts: [data, ...prev.contacts] }));
-  // };
 };
 
 handlerChangeFilter = e => this.setState({ filter: e.target.value });
@@ -42,7 +47,7 @@ getFilteredContacts = () => {
   if (!this.state.filter) return this.state.contacts;
 
   return this.state.contacts.filter(contact =>
-    contact.name.includes(this.state.filter)
+    contact.name.toLowerCase().includes(this.state.filter)
   );
 };
 
@@ -55,24 +60,14 @@ deleteContact = contactId => {
   render() {
     const { filter} = this.state;
     return (
-      <div
-        // style={{
-        //   height: '100vh',
-        //   display: 'flex',
-        //   justifyContent: 'center',
-        //   alignItems: 'center',
-        //   fontSize: 40,
-        //   color: '#010101'
-        // }}
-      >
+      <Container>
       <h1>Phonebook</h1>
       <ContactForm onSubmit={this.formSubmitHandler}/>
       <h2>Contacts</h2>
       <Filter value={filter} handlerChangeFilter={this.handlerChangeFilter}/>
-      {/* <ContactList/> */}
       <ContactList  contacts={this.getFilteredContacts()}
           onDelete={this.handleRemoveContact}/>
-      </div>
+      </Container>
     );
   }
 };
